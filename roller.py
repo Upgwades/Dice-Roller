@@ -64,6 +64,11 @@ def roll_dice(dice):
         # Sometimes lazy assholes don't put a number infront of the dice
         if dice[0] == 'd' or dice[0] == 'D': dice = '1' + dice
         dice = re.split('[dD]',dice)
+
+        # Why would someone roll 0 of something??
+        if int(dice[0]) == 0: return 0
+        if int(dice[1]) == 0: return 0
+
         for _ in range(int(dice[0])):
           total += random.randint(1,int(dice[1]))
         return total
@@ -77,7 +82,7 @@ def convert_int(number):
     """
     try:
         assert(isinstance(int(number),int))
-        return int(number)
+        return number
     except Exception as e:
         return None
 
@@ -100,7 +105,7 @@ def convert_dice(dice):
     try:
         match = re.match(dice_pattern, dice)
         assert(match)
-        return roll_dice(match.group(0))
+        return str(roll_dice(match.group(0)))
     except Exception as e:
         return None
 
@@ -134,13 +139,23 @@ if __name__ == '__main__':
         parser = argparse.ArgumentParser()
         parser.add_argument("input")
         args = parser.parse_args()
-        
+
         print('This is what I was given {}'.format(args.input))
-        input = args.input.split(' ')
-        assert(input[0] == '!r')
+        ops = ['+','-','*','/']
+        input = args.input
+
+        assert(input.startswith('!r'))
 
         # Remove the waste of space '!r'
-        input.pop(0)
+        input = input.replace('!r','')
+        input = input.replace(' ','')
+
+        # Make spacing consistent
+        for op in ops:
+            input = input.replace(op, ' {} '.format(op))
+
+        # Final split on clean string
+        input = input.split(' ')
 
         # Run the list through a generator function to convert elements
         input = ' '.join([str(item) for item in transmogrifier(input)])
