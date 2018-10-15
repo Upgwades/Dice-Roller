@@ -59,7 +59,7 @@ def roll_dice(dice):
    ex. dice = '3d10'
    """
    try:
-        total = 0
+        total = []
 
         # Sometimes lazy assholes don't put a number infront of the dice
         if dice[0] == 'd' or dice[0] == 'D': dice = '1' + dice
@@ -70,8 +70,9 @@ def roll_dice(dice):
         if int(dice[1]) == 0: return 0
 
         for _ in range(int(dice[0])):
-          total += random.randint(1,int(dice[1]))
-        return total
+          total.append(str(random.randint(1,int(dice[1]))))
+        combined = '(' + ' + '.join(total) + ')'
+        return combined
    except Exception as e:
        print('Dice roller problem, PANIC, \n {}'.format(e))
 
